@@ -1,5 +1,5 @@
 import RestaurantCard from '@/components/RestaurantCard';
-import React, {useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -120,9 +120,8 @@ const Main = ({navigation}: any) => {
           {restaurants.map(
             (item: any, index: number) =>
               category === item.restaurant_category && (
-                <>
+                <Fragment key={index}>
                   <TouchableOpacity
-                    key={index}
                     onPress={() => {
                       navigation.navigate('Restaurant', {
                         id: item.id,
@@ -137,7 +136,7 @@ const Main = ({navigation}: any) => {
                     />
                   </TouchableOpacity>
                   <Spacer4 />
-                </>
+                </Fragment>
               ),
           )}
         </ScrollView>

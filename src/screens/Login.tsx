@@ -1,24 +1,18 @@
-import RestaurantCard from '@/components/RestaurantCard';
 import React, {useEffect, useState} from 'react';
 import {
   SafeAreaView,
-  ScrollView,
-  Text,
   StatusBar,
   TouchableOpacity,
   TextInput,
-  View,
   Image,
 } from 'react-native';
 import styled from 'styled-components/native';
 import CheckBox from '@react-native-community/checkbox';
 import axios from 'axios';
-
-import AppLogo from '@assets/appLogo.svg';
-
+import {API_URI} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Login = ({navigation}) => {
+const Login = ({navigation}: any) => {
   const [id, setId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
@@ -40,7 +34,7 @@ const Login = ({navigation}) => {
       setError('아이디와 비밀번호를 입력해주세요.');
     } else {
       axios
-        .post('http://152.70.255.76:3000/auth/login', {
+        .post(`${API_URI}auth/login`, {
           user_id: id,
           user_pw: password,
         })
@@ -50,7 +44,7 @@ const Login = ({navigation}) => {
             setError('');
             AsyncStorage.setItem('refresh', res.data.refreshToken).then(() => {
               axios
-                .get('http://152.70.255.76:3000/auth/refresh', {
+                .get(`${API_URI}auth/refresh`, {
                   headers: {
                     Cookie: `refreshToken=${res.data.refreshToken};`,
                   },
