@@ -1,0 +1,30 @@
+// Restaurant
+[
+  {
+    "restaurant_uuid": 234234243, // 가게 id
+    "restaurant_name": "유진숙의떡볶이", // 가게 이름
+    "restaurant_category": "분식", // 가게 카테고리
+    "restaurant_rating": 4.5 // 가게 평점
+  }
+]
+
+//Menu
+[
+    {
+        restaurant_uuid: 234234243, // 가게 id
+        restaurant_menu_name: "국물떡볶이", // 메뉴 이름
+        restaurant_menu_description: "국물이 가득 있는 비싼 떡볶이", // 메뉴 설명
+        restaurant_menu_price: 6000, // 메뉴 가격
+      }  
+]
+
+// Review 
+[
+    {
+        restaurant_uuid: 234234243, // 가게 id
+        user_uuid: 32423424, // 유저 id
+        restaurant_review_title: "너무 맛있어요", // 리뷰 제목
+        restaurant_review_description: "사장님이 예쁘시고 서비스가 좋아요 다음에 또 올게요 ^^", // 리뷰 내용
+        restaurant_review_rating: 4; // 리뷰 평점
+    }
+]
