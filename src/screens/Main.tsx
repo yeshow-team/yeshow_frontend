@@ -14,6 +14,7 @@ import category from '@/constants/category';
 import {TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {API_URI} from '@env';
 
 const categoryFirst = ['한식', '일식', '중식', '분식'];
 
@@ -28,7 +29,7 @@ const Main = ({navigation}: any) => {
     StatusBar.setBarStyle('dark-content');
     AsyncStorage.getItem('access').then(value => {
       axios
-        .get('http://152.70.255.76:3000/restaurant', {
+        .get(`${API_URI}restaurant`, {
           headers: {
             Authorization: `Bearer ${value}`,
           },

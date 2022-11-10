@@ -1,5 +1,5 @@
 import {QueryClient, QueryClientProvider} from 'react-query';
-import RootNavigator from './src/navigation/RootNavigator';
+import RootNavigator from '@/navigation/RootNavigator';
 import {NavigationContainer} from '@react-navigation/native';
 import React, {Suspense} from 'react';
 import {RecoilRoot} from 'recoil';
