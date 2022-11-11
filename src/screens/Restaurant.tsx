@@ -140,9 +140,13 @@ const MenuComponent = ({image, price, name, description}) => {
         <ContentTop>
           <MenuName>{name}</MenuName>
           <Spacer8 />
-          <MenuDescription>{description}</MenuDescription>
+          <MenuDescription>
+            {description.substring(0, 13) + '...'}
+          </MenuDescription>
         </ContentTop>
-        <MenuPrice>{price}원</MenuPrice>
+        <MenuPrice>
+          {price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}원
+        </MenuPrice>
       </MenuContent>
       <MenuImage source={{uri: image}} />
     </MenuContainer>

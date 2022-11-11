@@ -46,38 +46,89 @@ const Reservation = ({route, navigation}: any) => {
     });
   }, []);
   return (
-    <AppContainer>
-      <QuestionContainer>
-        <Back />
-        <Spacer />
-        <Question>
-          {step === 1
-            ? `언제 방문하실\n예정인가요?`
-            : step === 2
-            ? `언제 방문하실\n예정인가요?`
-            : `언제 방문하실${'\n'}
-                예정인가요?`}
-        </Question>
-        <Spacer2 />
-        {step === 1 ? (
-          <TouchableOpacity>
-            <ActionText>시간 선택하기</ActionText>
+    <>
+      <AppContainer>
+        <QuestionContainer>
+          <TouchableOpacity
+            onPress={() => {
+              if (step === 1) {
+                navigation.goBack();
+              } else if (step === 2) {
+                setStep(1);
+              } else {
+                setStep(2);
+              }
+            }}>
+            <Back />
           </TouchableOpacity>
-        ) : step === 2 ? (
-          <TouchableOpacity>
-            <ActionText>인원수 입력하기</ActionText>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity>
-            <ActionText>메뉴 고르기</ActionText>
-          </TouchableOpacity>
-        )}
-      </QuestionContainer>
-    </AppContainer>
+
+          <Spacer />
+          <Question>
+            {step === 1
+              ? `언제 방문하실\n예정인가요?`
+              : step === 2
+              ? `방문 인원 수는\n총 몇명인가요?`
+              : `메뉴를\n선택해주세요`}
+          </Question>
+          <Spacer2 />
+          {step === 1 ? (
+            <TouchableOpacity>
+              <ActionText>시간 선택하기</ActionText>
+            </TouchableOpacity>
+          ) : step === 2 ? (
+            <NumberInput
+              value={people.toString()}
+              onChangeText={text => setPeople(parseInt(text))}
+              keyboardType="numeric"
+            />
+          ) : (
+            <TouchableOpacity>
+              <ActionText>메뉴 고르기</ActionText>
+            </TouchableOpacity>
+          )}
+        </QuestionContainer>
+      </AppContainer>
+      <SafeAreaView style={{backgroundColor: '#3dab70'}}>
+        <NextButton
+          onPress={() => {
+            if (step === 1) {
+              setStep(2);
+            } else if (step === 2) {
+              setStep(3);
+            } else {
+              navigation.navigate('ReservationResult');
+            }
+          }}>
+          <NextText>{step === 3 ? '결제하기' : '다음'}</NextText>
+        </NextButton>
+      </SafeAreaView>
+    </>
   );
 };
 
 export default Reservation;
+const NextText = styled.Text`
+  font-size: 19px;
+  font-weight: 600;
+  color: white;
+`;
+
+const NextButton = styled.TouchableOpacity`
+  background-color: #3dab70;
+  width: 100%;
+  height: 60px;
+  justify-content: center;
+  align-items: center;
+`;
+
+const NumberInput = styled.TextInput`
+  width: 100%;
+  height: 50px;
+  font-size: 19px;
+  border: 0;
+  border-bottom-width: 1px;
+  border-bottom-color: #000;
+`;
 
 const AppContainer = styled(SafeAreaView)`
   flex: 1;

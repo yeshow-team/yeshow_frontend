@@ -65,7 +65,7 @@ const Main = ({navigation}: any) => {
               a.restaurant_rating > b.restaurant_rating ? 1 : -1,
             )
             .sort((a, b) => (a.restaurant_name > b.restaurant_name ? 1 : -1))
-            .slice(0, 4)
+            .slice(0, 3)
             .map((item: any, index: number) => (
               <Fragment key={index}>
                 <TouchableOpacity
