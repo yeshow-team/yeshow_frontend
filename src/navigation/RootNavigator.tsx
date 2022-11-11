@@ -5,6 +5,8 @@ import Main from '@screens/Main';
 import Search from '@screens/Search';
 import Login from '@screens/Login';
 import Register from '@/screens/Register';
+import Restaurant from '@/screens/Restaurant';
+import Reservation from '@/screens/Reservation';
 
 const Stack = createStackNavigator();
 
@@ -30,6 +32,8 @@ const RootNavigator: React.FC = () => {
       <Stack.Screen name="Main" component={Main} />
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Auth" component={Auth} />
+      <Stack.Screen name="Restaurant" component={Restaurant} />
+      <Stack.Screen name="Reservation" component={Reservation} />
     </Stack.Navigator>
   );
 };

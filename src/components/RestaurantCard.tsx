@@ -12,17 +12,37 @@ const RestaurantCard = ({category, name, id, grade, imageUrl}) => {
         <Spacer />
         <Name>{name}</Name>
         <Spacer />
-        <GradeItem>
-          <Restaurant height={18} />
-          <Grade>{grade}/5.0점</Grade>
-        </GradeItem>
+        <GradeComponent grade={grade} />
       </Info>
       <ImageView source={{uri: imageUrl}} />
     </Container>
   );
 };
 
+const GradeComponent = ({grade}) => {
+  let color;
+  if (grade >= 4.0) {
+    color = '#3dab55';
+  } else if (grade >= 3.0) {
+    color = '#FFE600';
+  } else {
+    color = '#FF2E00';
+  }
+
+  return (
+    <GradeItem>
+      <Restaurant height={16} style={{color: color}} />
+      <RowSpacer />
+      <Grade style={{color: color}}>{grade}/5.0점</Grade>
+    </GradeItem>
+  );
+};
+
 export default RestaurantCard;
+
+const RowSpacer = styled.View`
+  width: 5px;
+`;
 
 const Container = styled.View`
   padding: 0 26px;
@@ -33,6 +53,7 @@ const Container = styled.View`
 
 const GradeItem = styled.View`
   flex-direction: row;
+  align-items: center;
 `;
 
 const Info = styled.View`

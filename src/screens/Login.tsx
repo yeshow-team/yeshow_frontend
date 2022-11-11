@@ -102,11 +102,10 @@ const Login = ({navigation}: any) => {
         )}
 
         <LoginAction>
-          <CheckContainer>
+          <CheckContainer onPress={() => setIsShowPassword(!isShowPassword)}>
             <CheckButton
               disabled={false}
               value={isShowPassword}
-              onValueChange={() => setIsShowPassword(!isShowPassword)}
               tintColor={'#3dab70'}
               onFillColor={'#3dab70'}
               onCheckColor={'#ffffff'}
@@ -141,7 +140,7 @@ const Error = styled.Text`
   width: 100%;
 `;
 
-const CheckContainer = styled.View`
+const CheckContainer = styled(TouchableOpacity)`
   flex-direction: row;
   align-items: center;
   justify-content: center;
@@ -175,10 +174,6 @@ const TextButton = styled.Text`
 
 const RowSpacer = styled.View`
   width: 10px;
-`;
-
-const RowSpacer2 = styled.View`
-  width: 5px;
 `;
 
 const LoginAction = styled.View`
@@ -237,32 +232,6 @@ const LoginText = styled.Text`
   font-weight: 600;
 `;
 
-const CategoryText2 = styled.Text`
-  font-size: 16px;
-  color: white;
-  text-align: center;
-  font-weight: 500;
-`;
-
-const CategoryContainer = styled.View`
-  padding: 0 26px;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: row;
-`;
-
-const CategoryButton2 = styled(TouchableOpacity)`
-  width: 76px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  color: #8d8d8d;
-  border: 1px solid #f2f2f2;
-  border-radius: 20px;
-`;
-
 const LoginButton = styled(TouchableOpacity)`
   height: 60px;
   display: flex;
@@ -274,21 +243,6 @@ const LoginButton = styled(TouchableOpacity)`
   background-color: #3dab70;
   width: 100%;
   border-radius: 7px;
-`;
-
-const Typo1 = styled.Text`
-  font-size: 22px;
-  font-weight: 600;
-  color: #2d2d2d;
-  padding: 0 26px;
-`;
-
-const Typo2 = styled.Text`
-  font-size: 16px;
-  font-weight: 500;
-  color: #8d8d8d;
-  padding: 0 26px;
-  line-height: 22px;
 `;
 
 const Spacer = styled.View`
@@ -313,22 +267,6 @@ const Spacer5 = styled.View`
 
 const Spacer6 = styled.View`
   height: 30px;
-`;
-
-const AnnounceText = styled.Text`
-  font-weight: 500;
-  font-size: 15px;
-  color: skyblue;
-  margin-left: 10px;
-`;
-
-const AnnounceCard = styled.View`
-  padding: 16px 18px;
-  background-color: blue;
-  border-radius: 20px;
-  margin: 20px 24px 0 20px;
-  flex-direction: row;
-  align-items: center;
 `;
 
 export default Login;

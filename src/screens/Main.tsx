@@ -60,12 +60,33 @@ const Main = ({navigation}: any) => {
             뭘 먹을지 모르겠다고요?{'\n'}지금 가장 핫한 식당을 살펴보세요!
           </Typo2>
           <Spacer3 />
-          <RestaurantCard category="한식" name="통닭" id="1" grade="4.5" />
-          <Spacer4 />
-          <RestaurantCard category="한식" name="통닭" id="1" grade="4.5" />
-          <Spacer4 />
-          <RestaurantCard category="한식" name="통닭" id="1" grade="4.5" />
+          {restaurants
+            .sort((a, b) =>
+              a.restaurant_rating > b.restaurant_rating ? 1 : -1,
+            )
+            .sort((a, b) => (a.restaurant_name > b.restaurant_name ? 1 : -1))
+            .slice(0, 4)
+            .map((item: any, index: number) => (
+              <Fragment key={index}>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('Restaurant', {
+                      id: item.restaurant_uuid,
+                    });
+                  }}>
+                  <RestaurantCard
+                    category={item.restaurant_category}
+                    name={item.restaurant_name}
+                    id={item.restaurant_uuid}
+                    grade={item.restaurant_rating}
+                    imageUrl={item.restaurant_image}
+                  />
+                </TouchableOpacity>
+                <Spacer4 />
+              </Fragment>
+            ))}
           <Spacer />
+
           <Typo1>우리 동네 식당</Typo1>
           <Spacer2 />
           <Typo2>
@@ -124,7 +145,7 @@ const Main = ({navigation}: any) => {
                   <TouchableOpacity
                     onPress={() => {
                       navigation.navigate('Restaurant', {
-                        id: item.id,
+                        id: item.restaurant_uuid,
                       });
                     }}>
                     <RestaurantCard
