@@ -2,9 +2,9 @@ import React from 'react';
 
 import {SafeAreaView, ScrollView, Text, StatusBar, Image} from 'react-native';
 import styled from 'styled-components/native';
-import Restaurant from '@assets/icons/restaurant.svg';
+import Restaurant from '@assets/icons/shop.svg';
 
-const RestaurantCard = ({category, name, id, grade, imageUrl}) => {
+const ShopCard = ({category, name, id, grade, imageUrl}) => {
   return (
     <Container>
       <Info>
@@ -24,7 +24,7 @@ const GradeComponent = ({grade}) => {
   if (grade >= 4.0) {
     color = '#3dab55';
   } else if (grade >= 3.0) {
-    color = '#FFE600';
+    color = '#ffbb00';
   } else {
     color = '#FF2E00';
   }
@@ -38,7 +38,7 @@ const GradeComponent = ({grade}) => {
   );
 };
 
-export default RestaurantCard;
+export default ShopCard;
 
 const RowSpacer = styled.View`
   width: 5px;

@@ -1,4 +1,3 @@
-import styled from 'styled-components/native';
 import {
   Image,
   SafeAreaView,
@@ -9,16 +8,19 @@ import {
 } from 'react-native';
 import Back from '@assets/icons/back.svg';
 import {useEffect, useState} from 'react';
+import styled from 'styled-components/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URI} from '@env';
 import Like from '@assets/icons/like.svg';
 import Share from '@assets/icons/share.svg';
-import GradeIcon from '@assets/icons/restaurant.svg';
+import GradeIcon from '@assets/icons/shop.svg';
 import Reservation from './Reservation';
+import StarFill from '@assets/icons/star_fill.svg';
+import Star from '@assets/icons/star.svg';
 
-const Restaurant = ({route, navigation}: any) => {
-  const [restaurant, setRestaurant] = useState<any>();
+const Shop = ({route, navigation}: any) => {
+  const [shop, setShop] = useState<any>();
   const [menu, setMenu] = useState<any>([]);
   const [isLike, setIsLike] = useState<boolean>(false);
   const [review, setReview] = useState<any>([]);
@@ -29,17 +31,20 @@ const Restaurant = ({route, navigation}: any) => {
 
     AsyncStorage.getItem('access').then(token => {
       axios
-        .get(`${API_URI}restaurant/${route.params.id}`, {
+        .get(`${API_URI}shop/${route.params.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
         .then(res => {
           console.log(res.data);
-          setRestaurant(res.data.restaurant);
+          setShop(res.data.shop);
           setMenu(res.data.menu);
           setIsLike(res.data.isLike);
           setReview(res.data.review);
+        })
+        .catch(err => {
+          console.log(err);
         });
     });
   }, []);
@@ -53,29 +58,29 @@ const Restaurant = ({route, navigation}: any) => {
         }}
       />
       <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-        {restaurant && (
+        {shop && (
           <>
             <Header>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Back />
               </TouchableOpacity>
 
-              <Title>{restaurant.restaurant_name}</Title>
+              <Title>{shop.shop_name}</Title>
               <View style={{width: 24, background: 'none'}}></View>
             </Header>
             <ScrollView style={{backgroundColor: '#ffffff'}}>
               <ImageView
                 source={{
-                  uri: restaurant.restaurant_image,
+                  uri: shop.shop_image,
                 }}
               />
               <Container>
                 <Spacer />
-                <Category>{restaurant.restaurant_category}</Category>
+                <Category>{shop.shop_category}</Category>
                 <Spacer2 />
-                <RestaurantTitle>{restaurant.restaurant_name}</RestaurantTitle>
+                <ShopTitle>{shop.shop_name}</ShopTitle>
                 <Spacer3 />
-                <GradeComponent grade={restaurant.restaurant_rating} />
+                <GradeComponent grade={shop.shop_rating} />
                 <Spacer4 />
                 <RowFull>
                   <ActionButton>
@@ -100,10 +105,10 @@ const Restaurant = ({route, navigation}: any) => {
                   <>
                     <MenuComponent
                       key={index}
-                      name={item.restaurant_menu_name}
-                      price={item.restaurant_menu_price}
-                      image={item.restaurant_menu_image}
-                      description={item.restaurant_menu_description}
+                      name={item.shop_menu_name}
+                      price={item.shop_menu_price}
+                      image={item.shop_menu_image}
+                      description={item.shop_menu_description}
                     />
                     <Spacer7 />
                   </>
@@ -111,8 +116,22 @@ const Restaurant = ({route, navigation}: any) => {
                 <Row>
                   <SectionTitle>리뷰</SectionTitle>
                   <SectionSpacer />
-                  <SectionSubtitle>총 {review.length}개</SectionSubtitle>
+                  <SectionSubtitle>총 {review.length}개의 리뷰</SectionSubtitle>
                 </Row>
+                <Spacer6 />
+                {review.map((item, index) => (
+                  <>
+                    <ReviewComponent
+                      key={index}
+                      title={item.shop_review_title}
+                      content={item.shop_review_detail}
+                      user={item.user_id}
+                      rating={item.shop_review_rating}
+                      date={item.shop_review_updated_date}
+                    />
+                    <Spacer7 />
+                  </>
+                ))}
               </Container>
             </ScrollView>
           </>
@@ -131,7 +150,7 @@ const Restaurant = ({route, navigation}: any) => {
     </>
   );
 };
-export default Restaurant;
+export default Shop;
 
 const MenuComponent = ({image, price, name, description}) => {
   return (
@@ -152,6 +171,121 @@ const MenuComponent = ({image, price, name, description}) => {
     </MenuContainer>
   );
 };
+
+const ReviewComponent = ({title, content, user, rating, date}) => {
+  return (
+    <ReviewContainer>
+      <UserContainer>
+        <UserImage source={{uri: 'https://picsum.photos/200'}} />
+        <RatingSpacer />
+        <Username>{user.substr(0, 3) + '*'.repeat(user.length - 3)}님</Username>
+        <RatingSpacer />
+        <ReviewDate>{timeForToday(date)}</ReviewDate>
+      </UserContainer>
+      <RatingColumnSpacer />
+      <RatingContainer>
+        {Array.from({length: rating}, (v, i) => (
+          <StarFill width={24} height={24} />
+        ))}
+        {Array.from({length: 5 - rating}, (v, i) => (
+          <Star />
+        ))}
+        <RatingText>{rating}.0/5.0점</RatingText>
+      </RatingContainer>
+      <RatingColumnSpacer2 />
+      <ReviewTitle>{title}</ReviewTitle>
+      <ReviewContent>{content}</ReviewContent>
+    </ReviewContainer>
+  );
+};
+
+const timeForToday = value => {
+  const today = new Date();
+  const timeValue = new Date(value);
+
+  const betweenTime = Math.floor(
+    (today.getTime() - timeValue.getTime()) / 1000 / 60,
+  );
+  if (betweenTime < 1) return '방금 전';
+  if (betweenTime < 60) {
+    return `${betweenTime}분 전`;
+  }
+
+  const betweenTimeHour = Math.floor(betweenTime / 60);
+  if (betweenTimeHour < 24) {
+    return `${betweenTimeHour}시간 전`;
+  }
+
+  const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+  if (betweenTimeDay < 365) {
+    return `${betweenTimeDay}일 전`;
+  }
+
+  return `${Math.floor(betweenTimeDay / 365)}년 전`;
+};
+
+const RatingColumnSpacer2 = styled.View`
+  width: 100%;
+  height: 19px;
+`;
+
+const RatingColumnSpacer = styled.View`
+  height: 12px;
+`;
+
+const RatingSpacer = styled.View`
+  width: 13px;
+`;
+
+const RatingContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const RatingText = styled.Text`
+  font-size: 16px;
+  color: #3dab70;
+  margin-left: 18px;
+`;
+
+const ReviewTitle = styled.Text`
+  font-size: 22px;
+  font-weight: bold;
+  margin-top: 8px;
+`;
+
+const ReviewContent = styled.Text`
+  font-size: 19px;
+  color: #3b3b3b;
+  margin-top: 8px;
+  line-height: 28px;
+`;
+
+const ReviewContainer = styled.View`
+  background-color: #ffffff;
+`;
+
+const UserContainer = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const UserImage = styled.Image`
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+`;
+
+const Username = styled.Text`
+  font-size: 19px;
+  color: #2d2d2d;
+  font-weight: 500;
+`;
+
+const ReviewDate = styled.Text`
+  color: #8d8d8d;
+  font-size: 19px;
+`;
 
 const MenuContainer = styled.View`
   flex-direction: row;
@@ -287,7 +421,7 @@ const Container = styled.View`
   display: flex;
 `;
 
-const RestaurantTitle = styled.Text`
+const ShopTitle = styled.Text`
   font-size: 25px;
   font-weight: 600;
   color: #2d2d2d;

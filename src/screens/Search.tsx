@@ -1,4 +1,4 @@
-import RestaurantCard from '@/components/RestaurantCard';
+import ShopCard from '@components/ShopCard';
 import React, {Fragment, useEffect, useState} from 'react';
 import Back from '@/assets/icons/back.svg';
 import {
@@ -24,7 +24,7 @@ const categoryFirst = ['한식', '일식', '중식', '분식'];
 const categorySecond = ['치킨', '피자', '양식', '카페'];
 
 const Search = ({navigation}: any) => {
-  const [restaurants, setRestaurants] = useState<any>([]);
+  const [shops, setShops] = useState<any>([]);
   const [query, setQuery] = useState<string>('');
   useEffect(() => {
     StatusBar.setBackgroundColor('transparent');
@@ -36,7 +36,7 @@ const Search = ({navigation}: any) => {
     AsyncStorage.getItem('access').then(value => {
       axios
         .post(
-          `${API_URI}restaurant/search`,
+          `${API_URI}shop/search`,
           {search: query},
           {
             headers: {
@@ -46,7 +46,7 @@ const Search = ({navigation}: any) => {
         )
         .then(res => {
           console.log(res.data);
-          setRestaurants(res.data);
+          setShops(res.data);
         });
     });
   }, [query]);
@@ -78,28 +78,28 @@ const Search = ({navigation}: any) => {
           />
         </SearchBar>
         <ScrollView style={{backgroundColor: '#f7f7f7'}}>
-          {restaurants.length > 0 &&
-            restaurants.map((item: any, index: number) => (
+          {shops.length > 0 &&
+            shops.map((item: any, index: number) => (
               <Fragment key={index}>
                 <Spacer4 />
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate('Restaurant', {
-                      id: item.restaurant_uuid,
+                    navigation.navigate('Shop', {
+                      id: item.shop_uuid,
                     });
                   }}
                   style={{backgroundColor: 'white'}}>
-                  <RestaurantCard
-                    category={item.restaurant_category}
-                    name={item.restaurant_name}
-                    id={item.restaurant_uuid}
-                    grade={item.restaurant_rating}
-                    imageUrl={item.restaurant_image}
+                  <ShopCard
+                    category={item.shop_category}
+                    name={item.shop_name}
+                    id={item.shop_uuid}
+                    grade={item.shop_rating}
+                    imageUrl={item.shop_image}
                   />
                 </TouchableOpacity>
               </Fragment>
             ))}
-          {restaurants.length > 0 && <Spacer4 />}
+          {shops.length > 0 && <Spacer4 />}
         </ScrollView>
       </SafeAreaView>
     </>

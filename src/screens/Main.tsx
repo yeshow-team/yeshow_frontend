@@ -1,20 +1,12 @@
-import RestaurantCard from '@/components/RestaurantCard';
 import React, {Fragment, useEffect, useState} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  Text,
-  StatusBar,
-  Pressable,
-} from 'react-native';
+import {SafeAreaView, ScrollView, StatusBar} from 'react-native';
 import styled from 'styled-components/native';
-import dayString from '../constants/dayString';
 import Header from '@/components/header';
-import category from '@/constants/category';
 import {TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URI} from '@env';
+import ShopCard from '@/components/ShopCard';
 
 const categoryFirst = ['한식', '일식', '중식', '분식'];
 
@@ -22,25 +14,23 @@ const categorySecond = ['치킨', '피자', '양식', '카페'];
 
 const Main = ({navigation}: any) => {
   const [category, setCategory] = useState<string>('한식');
-  const [restaurants, setRestaurants] = useState<any>([]);
+  const [shops, setShops] = useState<any>([]);
   useEffect(() => {
     StatusBar.setBackgroundColor('transparent');
     StatusBar.setTranslucent(true);
     StatusBar.setBarStyle('dark-content');
     AsyncStorage.getItem('access').then(value => {
       axios
-        .get(`${API_URI}restaurant`, {
+        .get(`${API_URI}shop`, {
           headers: {
             Authorization: `Bearer ${value}`,
           },
         })
         .then(res => {
-          setRestaurants(res.data);
+          setShops(res.data);
         });
     });
   }, []);
-  const date: Date = new Date();
-  const day: string = dayString[date.getDay()];
   return (
     <>
       <SafeAreaView
@@ -60,26 +50,24 @@ const Main = ({navigation}: any) => {
             뭘 먹을지 모르겠다고요?{'\n'}지금 가장 핫한 식당을 살펴보세요!
           </Typo2>
           <Spacer3 />
-          {restaurants
-            .sort((a, b) =>
-              a.restaurant_rating > b.restaurant_rating ? 1 : -1,
-            )
-            .sort((a, b) => (a.restaurant_name > b.restaurant_name ? 1 : -1))
+          {shops
+            .sort((a, b) => (a.shop_rating < b.shop_rating ? 1 : -1))
+
             .slice(0, 3)
             .map((item: any, index: number) => (
               <Fragment key={index}>
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate('Restaurant', {
-                      id: item.restaurant_uuid,
+                    navigation.navigate('Shop', {
+                      id: item.shop_uuid,
                     });
                   }}>
-                  <RestaurantCard
-                    category={item.restaurant_category}
-                    name={item.restaurant_name}
-                    id={item.restaurant_uuid}
-                    grade={item.restaurant_rating}
-                    imageUrl={item.restaurant_image}
+                  <ShopCard
+                    category={item.shop_category}
+                    name={item.shop_name}
+                    id={item.shop_uuid}
+                    grade={item.shop_rating}
+                    imageUrl={item.shop_image}
                   />
                 </TouchableOpacity>
                 <Spacer4 />
@@ -138,22 +126,22 @@ const Main = ({navigation}: any) => {
           </CategoryContainer>
 
           <Spacer />
-          {restaurants.map(
+          {shops.map(
             (item: any, index: number) =>
-              category === item.restaurant_category && (
+              category === item.shop_category && (
                 <Fragment key={index}>
                   <TouchableOpacity
                     onPress={() => {
-                      navigation.navigate('Restaurant', {
-                        id: item.restaurant_uuid,
+                      navigation.navigate('Shop', {
+                        id: item.shop_uuid,
                       });
                     }}>
-                    <RestaurantCard
-                      category={item.restaurant_category}
-                      name={item.restaurant_name}
-                      id={item.restaurant_uuid}
-                      grade={item.restaurant_rating}
-                      imageUrl={item.restaurant_image}
+                    <ShopCard
+                      category={item.shop_category}
+                      name={item.shop_name}
+                      id={item.shop_uuid}
+                      grade={item.shop_rating}
+                      imageUrl={item.shop_image}
                     />
                   </TouchableOpacity>
                   <Spacer4 />
@@ -245,22 +233,6 @@ const Spacer4 = styled.View`
 
 const Spacer5 = styled.View`
   height: 20px;
-`;
-
-const AnnounceText = styled.Text`
-  font-weight: 500;
-  font-size: 15px;
-  color: skyblue;
-  margin-left: 10px;
-`;
-
-const AnnounceCard = styled.View`
-  padding: 16px 18px;
-  background-color: blue;
-  border-radius: 20px;
-  margin: 20px 24px 0 20px;
-  flex-direction: row;
-  align-items: center;
 `;
 
 export default Main;

@@ -5,7 +5,7 @@ import Main from '@screens/Main';
 import Search from '@screens/Search';
 import Login from '@screens/Login';
 import Register from '@/screens/Register';
-import Restaurant from '@/screens/Restaurant';
+import Shop from '@screens/Shop';
 import Reservation from '@/screens/Reservation';
 import ReservationResult from '@/screens/ReservationResult';
 
@@ -33,7 +33,7 @@ const RootNavigator: React.FC = () => {
       <Stack.Screen name="Main" component={Main} />
       <Stack.Screen name="Search" component={Search} />
       <Stack.Screen name="Auth" component={Auth} />
-      <Stack.Screen name="Restaurant" component={Restaurant} />
+      <Stack.Screen name="Shop" component={Shop} />
       <Stack.Screen name="Reservation" component={Reservation} />
       <Stack.Screen name="ReservationResult" component={ReservationResult} />
     </Stack.Navigator>

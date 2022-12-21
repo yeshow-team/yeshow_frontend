@@ -126,12 +126,16 @@ const Login = ({navigation}: any) => {
         <CheckContainer>
           <CheckText>Yeshow에 처음이신가요?</CheckText>
           <RowSpacer />
-          <TextButton>회원가입</TextButton>
+          <TextButtonPress onPress={() => navigation.navigate('Register')}>
+            <TextButton>회원가입</TextButton>
+          </TextButtonPress>
         </CheckContainer>
       </LoginContainer>
     </AppContainer>
   );
 };
+
+const TextButtonPress = styled.TouchableOpacity``;
 
 const Error = styled.Text`
   font-size: 16px;

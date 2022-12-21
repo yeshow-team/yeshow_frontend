@@ -1,30 +1,22 @@
 import styled from 'styled-components/native';
-import {
-  Image,
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {SafeAreaView, StatusBar, TouchableOpacity, Text} from 'react-native';
 import Back from '@assets/icons/back_2.svg';
 import {useEffect, useState} from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {API_URI} from '@env';
-import Like from '@assets/icons/like.svg';
-import Share from '@assets/icons/share.svg';
-import GradeIcon from '@assets/icons/restaurant.svg';
-
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 const Reservation = ({route, navigation}: any) => {
   const [step, setStep] = useState<number>(1);
   const [date, setDate] = useState<string>('');
   const [time, setTime] = useState<string>('');
   const [people, setPeople] = useState<number>(1);
 
-  const [restaurant, setRestaurant] = useState<any>();
+  const [shop, setShop] = useState<any>();
   const [menu, setMenu] = useState<any>([]);
-  const [review, setReview] = useState<any>([]);
+  const [selectedMenu, setSelectedMenu] = useState<any>([]);
+  const [reservationDate, setReservationDate] = useState('');
+  const [timeVisible, setTimeVisible] = useState<boolean>(false);
   useEffect(() => {
     StatusBar.setBackgroundColor('transparent');
     StatusBar.setTranslucent(true);
@@ -32,19 +24,48 @@ const Reservation = ({route, navigation}: any) => {
 
     AsyncStorage.getItem('access').then(token => {
       axios
-        .get(`${API_URI}restaurant/${route.params.id}`, {
+        .get(`${API_URI}shop/menu/${route.params.id}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         })
         .then(res => {
           console.log(res.data);
-          setRestaurant(res.data.restaurant);
-          setMenu(res.data.menu);
-          setReview(res.data.review);
+          setMenu(res.data);
         });
     });
   }, []);
+
+  const reservation = () => {
+    AsyncStorage.getItem('access')
+      .then(token => {
+        axios.post(
+          `${API_URI}book`,
+          {
+            book: {
+              shop_uuid: route.params.id,
+              book_date: date,
+              book_people: people,
+              book_price: 13000,
+            },
+            book_menu: [
+              {
+                menu_uuid: 9,
+                menu_count: 1,
+              },
+            ],
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
   return (
     <>
       <AppContainer>
@@ -72,9 +93,23 @@ const Reservation = ({route, navigation}: any) => {
           </Question>
           <Spacer2 />
           {step === 1 ? (
-            <TouchableOpacity>
-              <ActionText>시간 선택하기</ActionText>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity onPress={() => setTimeVisible(true)}>
+                <ActionText>시간 선택하기</ActionText>
+              </TouchableOpacity>
+              <DateTimePickerModal
+                isVisible={timeVisible}
+                mode="time"
+                onConfirm={date => {
+                  setDate(date.toString());
+                  console.log(date);
+                  setTimeVisible(false);
+                }}
+                onCancel={() => {
+                  setTimeVisible(false);
+                }}
+              />
+            </>
           ) : step === 2 ? (
             <NumberInput
               value={people.toString()}
@@ -82,9 +117,13 @@ const Reservation = ({route, navigation}: any) => {
               keyboardType="numeric"
             />
           ) : (
-            <TouchableOpacity>
-              <ActionText>메뉴 고르기</ActionText>
-            </TouchableOpacity>
+            menu.map((item: any) => {
+              return (
+                <TouchableOpacity>
+                  <Text>{item.shop_menu_name}</Text>
+                </TouchableOpacity>
+              );
+            })
           )}
         </QuestionContainer>
       </AppContainer>
@@ -96,6 +135,7 @@ const Reservation = ({route, navigation}: any) => {
             } else if (step === 2) {
               setStep(3);
             } else {
+              // reservation();
               navigation.navigate('ReservationResult');
             }
           }}>
