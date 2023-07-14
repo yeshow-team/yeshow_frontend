@@ -1,55 +1,72 @@
 import {
-  Image,
+  Image, Platform,
   SafeAreaView,
   ScrollView,
-  StatusBar,
+  StatusBar, Text,
   TouchableOpacity,
   View,
 } from 'react-native';
 import Back from '@assets/icons/back.svg';
 import {useEffect, useState} from 'react';
 import styled from 'styled-components/native';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URI} from '@env';
 import Like from '@assets/icons/like.svg';
 import Share from '@assets/icons/share.svg';
 import GradeIcon from '@assets/icons/shop.svg';
-import Reservation from './Reservation';
-import StarFill from '@assets/icons/star_fill.svg';
-import Star from '@assets/icons/star.svg';
+import Review from "@components/Review";
+import Menu from "@components/Menu";
+import {getMenu, getReview, getShop} from "@/lib/api/shop";
+import {useMutation, useQuery, useQueryClient} from "react-query";
+import review from "@components/Review";
+import {postReview} from "@/lib/api/review";
+import CreateReview from "@components/CreateReview";
+
+type ReviewDataType = {
+  shop_review_title: string
+  shop_review_detail: string
+  shop_uuid: string
+  shop_review_rating: number
+  shop_review_updated_date:string
+  date: string
+  user_id: string
+  user_image: string
+  myReview: boolean
+  user_name: string
+}
+
+interface MenuType {
+  menu_id: number;
+  shop_uuid: string;
+  shop_menu_name: string;
+  shop_menu_description: string;
+  shop_menu_price: number;
+  shop_menu_image: string;
+  shop_menu_type: number;
+}
 
 const Shop = ({route, navigation}: any) => {
-  const [shop, setShop] = useState<any>();
-  const [menu, setMenu] = useState<any>([]);
-  const [isLike, setIsLike] = useState<boolean>(false);
-  const [review, setReview] = useState<any>([]);
-  useEffect(() => {
-    StatusBar.setBackgroundColor('transparent');
-    StatusBar.setTranslucent(true);
-    StatusBar.setBarStyle('dark-content');
 
-    AsyncStorage.getItem('access').then(token => {
-      axios
-        .get(`${API_URI}shop/${route.params.id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        .then(res => {
-          console.log(res.data);
-          setShop(res.data.shop);
-          setMenu(res.data.menu);
-          setIsLike(res.data.isLike);
-          setReview(res.data.review);
-        })
-        .catch(err => {
-          console.log(err);
-        });
-    });
+  const {data:shop} = useQuery(['shop'],() => getShop(route.params.id), {
+    enabled: !!route.params.id,
+    suspense: true,
+  });
+  const {data:menu} = useQuery(['shopMenu'],() => getMenu(route.params.id,), {
+    enabled: !!route.params.id,
+    suspense: true,
+  });
+  const {data:review} = useQuery(['shopReview'],() => getReview(route.params.id), {
+    enabled: !!route.params.id,
+    suspense: true,
+  });
+
+  useEffect(() => {
+    if(Platform.OS === 'android') {
+      StatusBar.setBackgroundColor('transparent');
+      StatusBar.setTranslucent(true);
+      StatusBar.setBarStyle('dark-content');
+    }
   }, []);
   return (
-    <>
+      <>
       <SafeAreaView
         style={{
           flex: 0,
@@ -58,15 +75,13 @@ const Shop = ({route, navigation}: any) => {
         }}
       />
       <SafeAreaView style={{flex: 1, backgroundColor: 'white'}}>
-        {shop && (
-          <>
             <Header>
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Back />
               </TouchableOpacity>
 
               <Title>{shop.shop_name}</Title>
-              <View style={{width: 24, background: 'none'}}></View>
+              <View style={{width: 24, backgroundColor: 'none'}}></View>
             </Header>
             <ScrollView style={{backgroundColor: '#ffffff'}}>
               <ImageView
@@ -101,9 +116,9 @@ const Shop = ({route, navigation}: any) => {
                   <SectionSubtitle>총 {menu.length}개</SectionSubtitle>
                 </Row>
                 <Spacer6 />
-                {menu.map((item, index) => (
+                {menu.map((item:MenuType, index:number) => (
                   <>
-                    <MenuComponent
+                    <Menu
                       key={index}
                       name={item.shop_menu_name}
                       price={item.shop_menu_price}
@@ -128,14 +143,15 @@ const Shop = ({route, navigation}: any) => {
                       user={item.user_id}
                       rating={item.shop_review_rating}
                       date={item.shop_review_updated_date}
+                      myReview={item.myReview}
+                     shopUuid={item.shop_uuid}
+                      reviewId={item.review_id}
                     />
                     <Spacer7 />
                   </>
                 ))}
               </Container>
             </ScrollView>
-          </>
-        )}
       </SafeAreaView>
       <SafeAreaView style={{backgroundColor: '#3dab70'}}>
         <ReservationButton
@@ -148,56 +164,26 @@ const Shop = ({route, navigation}: any) => {
         </ReservationButton>
       </SafeAreaView>
     </>
-  );
+
+);
 };
 export default Shop;
 
-const MenuComponent = ({image, price, name, description}) => {
-  return (
-    <MenuContainer>
-      <MenuContent>
-        <ContentTop>
-          <MenuName>{name}</MenuName>
-          <Spacer8 />
-          <MenuDescription>
-            {description.substring(0, 13) + '...'}
-          </MenuDescription>
-        </ContentTop>
-        <MenuPrice>
-          {price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ',')}원
-        </MenuPrice>
-      </MenuContent>
-      <MenuImage source={{uri: image}} />
-    </MenuContainer>
-  );
-};
 
-const ReviewComponent = ({title, content, user, rating, date}) => {
-  return (
-    <ReviewContainer>
-      <UserContainer>
-        <UserImage source={{uri: 'https://picsum.photos/200'}} />
-        <RatingSpacer />
-        <Username>{user.substr(0, 3) + '*'.repeat(user.length - 3)}님</Username>
-        <RatingSpacer />
-        <ReviewDate>{timeForToday(date)}</ReviewDate>
-      </UserContainer>
-      <RatingColumnSpacer />
-      <RatingContainer>
-        {Array.from({length: rating}, (v, i) => (
-          <StarFill width={24} height={24} />
-        ))}
-        {Array.from({length: 5 - rating}, (v, i) => (
-          <Star />
-        ))}
-        <RatingText>{rating}.0/5.0점</RatingText>
-      </RatingContainer>
-      <RatingColumnSpacer2 />
-      <ReviewTitle>{title}</ReviewTitle>
-      <ReviewContent>{content}</ReviewContent>
-    </ReviewContainer>
-  );
-};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 const timeForToday = value => {
   const today = new Date();
@@ -224,110 +210,14 @@ const timeForToday = value => {
   return `${Math.floor(betweenTimeDay / 365)}년 전`;
 };
 
-const RatingColumnSpacer2 = styled.View`
-  width: 100%;
-  height: 19px;
-`;
 
-const RatingColumnSpacer = styled.View`
-  height: 12px;
-`;
 
-const RatingSpacer = styled.View`
-  width: 13px;
-`;
-
-const RatingContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const RatingText = styled.Text`
-  font-size: 16px;
-  color: #3dab70;
-  margin-left: 18px;
-`;
 
 const ReviewTitle = styled.Text`
-  font-size: 22px;
-  font-weight: bold;
-  margin-top: 8px;
-`;
-
-const ReviewContent = styled.Text`
   font-size: 19px;
-  color: #3b3b3b;
-  margin-top: 8px;
-  line-height: 28px;
-`;
+`
 
-const ReviewContainer = styled.View`
-  background-color: #ffffff;
-`;
 
-const UserContainer = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const UserImage = styled.Image`
-  width: 40px;
-  height: 40px;
-  border-radius: 20px;
-`;
-
-const Username = styled.Text`
-  font-size: 19px;
-  color: #2d2d2d;
-  font-weight: 500;
-`;
-
-const ReviewDate = styled.Text`
-  color: #8d8d8d;
-  font-size: 19px;
-`;
-
-const MenuContainer = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  height: 97px;
-`;
-
-const MenuContent = styled.View`
-  flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
-  align-items: flex-start;
-  background: #ffffff;
-`;
-
-const ContentTop = styled.View`
-  flex-direction: column;
-`;
-
-const MenuName = styled.Text`
-  font-size: 25px;
-  font-weight: 600;
-  color: #2d2d2d;
-`;
-
-const MenuDescription = styled.Text`
-  font-size: 19px;
-  color: #8d8d8d;
-`;
-
-const MenuPrice = styled.Text`
-  font-size: 19px;
-  font-weight: 400;
-  color: #2d2d2d;
-`;
-
-const MenuImage = styled.Image`
-  height: 97px;
-  width: 100px;
-`;
 
 const SectionSpacer = styled.View`
   width: 16px;
@@ -359,7 +249,9 @@ const ReservationButton = styled.TouchableOpacity`
   align-items: center;
 `;
 
-const GradeComponent = ({grade}) => {
+const GradeComponent = ({grade}:{
+  grade:number
+}) => {
   let color;
   if (grade >= 4.0) {
     color = '#3dab55';
@@ -486,9 +378,6 @@ const Spacer7 = styled.View`
   height: 35px;
 `;
 
-const Spacer8 = styled.View`
-  height: 8px;
-`;
 
 const Header = styled.View`
   height: 56px;

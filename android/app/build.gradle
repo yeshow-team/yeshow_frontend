@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: "com.google.gms.google-services"
 
 import com.android.build.OutputFile
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -135,7 +136,7 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "com.yeshow"
+        applicationId "com.yeshow.yeshowapp"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -219,10 +220,10 @@ android {
         }
         release {
             if (project.hasProperty('MYAPP_UPLOAD_STORE_FILE')) {
-                storeFile file(MYAPP_UPLOAD_STORE_FILE)
-                storePassword MYAPP_UPLOAD_STORE_PASSWORD
-                keyAlias MYAPP_UPLOAD_KEY_ALIAS
-                keyPassword MYAPP_UPLOAD_KEY_PASSWORD
+                storeFile file('yeshow.keystore')
+                storePassword 'sunrin1234'
+                keyAlias 'yeshow'
+                keyPassword 'sunrin1234'
             }
         }
     }
@@ -285,6 +286,8 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+    implementation platform('com.google.firebase:firebase-bom:31.1.0') // 여기 내용을 추가해줍니다.
+     implementation 'com.google.firebase:firebase-messaging' // 여기 내용을 추가해줍니다.
 }
 
 if (isNewArchitectureEnabled()) {

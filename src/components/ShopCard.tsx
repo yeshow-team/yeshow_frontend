@@ -1,10 +1,14 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
-import {SafeAreaView, ScrollView, Text, StatusBar, Image} from 'react-native';
+import {Image} from 'react-native';
 import styled from 'styled-components/native';
 import Restaurant from '@assets/icons/shop.svg';
 
 const ShopCard = ({category, name, id, grade, imageUrl}) => {
+  useEffect(
+    () => console.log(`ShopCard ${grade} rendered`),
+    [grade],
+  )
   return (
     <Container>
       <Info>
@@ -33,7 +37,7 @@ const GradeComponent = ({grade}) => {
     <GradeItem>
       <Restaurant height={16} style={{color: color}} />
       <RowSpacer />
-      <Grade style={{color: color}}>{grade}/5.0점</Grade>
+      <Grade style={{color: color}}>{grade.toFixed(1)}/5.0점</Grade>
     </GradeItem>
   );
 };

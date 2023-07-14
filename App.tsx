@@ -1,13 +1,12 @@
 import {QueryClient, QueryClientProvider} from 'react-query';
-import RootNavigator from './src/navigation/RootNavigator';
 import {NavigationContainer} from '@react-navigation/native';
-import React, {Suspense} from 'react';
-import {RecoilRoot} from 'recoil';
-import styled from 'styled-components/native';
-
+import React, {useCallback, useEffect} from 'react';
+import {RecoilRoot, useRecoilState} from 'recoil';
+import RootNavigator from "./src/navigation/RootNavigator";
+import messaging from "@react-native-firebase/messaging";
+import modalState from "./src/store/modal";
 const queryClient = new QueryClient();
-
-const App = () => {
+function App() {
   return (
     <RecoilRoot>
       <QueryClientProvider client={queryClient}>
@@ -17,6 +16,7 @@ const App = () => {
       </QueryClientProvider>
     </RecoilRoot>
   );
-};
+}
+
 
 export default App;

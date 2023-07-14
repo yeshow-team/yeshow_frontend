@@ -1,38 +1,45 @@
 import React, {Fragment, useEffect, useState} from 'react';
-import {SafeAreaView, ScrollView, StatusBar} from 'react-native';
+import {Platform, SafeAreaView, ScrollView, StatusBar, TouchableOpacity} from 'react-native';
 import styled from 'styled-components/native';
 import Header from '@/components/header';
-import {TouchableOpacity} from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URI} from '@env';
 import ShopCard from '@/components/ShopCard';
+import {StackNavigationProp} from "@react-navigation/stack";
+import {getShopAll} from "@/lib/api/shop";
+import {useQuery, useQueryClient} from "react-query";
+import {useIsFocused} from "@react-navigation/native";
+import messaging from "@react-native-firebase/messaging";
+import Modal from "@components/Modal";
 
 const categoryFirst = ['한식', '일식', '중식', '분식'];
-
 const categorySecond = ['치킨', '피자', '양식', '카페'];
 
-const Main = ({navigation}: any) => {
+// @ts-ignore
+const Main = ({navigation}) => {
   const [category, setCategory] = useState<string>('한식');
-  const [shops, setShops] = useState<any>([]);
+  const queryClient = useQueryClient();
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    StatusBar.setBackgroundColor('transparent');
-    StatusBar.setTranslucent(true);
-    StatusBar.setBarStyle('dark-content');
-    AsyncStorage.getItem('access').then(value => {
-      axios
-        .get(`${API_URI}shop`, {
-          headers: {
-            Authorization: `Bearer ${value}`,
-          },
-        })
-        .then(res => {
-          setShops(res.data);
-        });
-    });
+    if(Platform.OS === 'android') {
+      StatusBar.setBackgroundColor('transparent');
+      StatusBar.setTranslucent(true);
+      StatusBar.setBarStyle('dark-content');
+    }
+
   }, []);
+
+useEffect(() => {
+    queryClient.invalidateQueries(['shops']);
+}, [isFocused]);
+
+
+  const {data:shops} = useQuery(['shops'], getShopAll, {suspense: true});
   return (
+      shops &&
     <>
+        <Modal />
       <SafeAreaView
         style={{
           flex: 0,
@@ -52,7 +59,6 @@ const Main = ({navigation}: any) => {
           <Spacer3 />
           {shops
             .sort((a, b) => (a.shop_rating < b.shop_rating ? 1 : -1))
-
             .slice(0, 3)
             .map((item: any, index: number) => (
               <Fragment key={index}>

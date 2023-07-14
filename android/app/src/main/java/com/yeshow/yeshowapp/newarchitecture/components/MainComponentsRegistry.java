@@ -1,4 +1,4 @@
-package com.yeshow.newarchitecture.components;
+package com.yeshow.yeshowapp.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

@@ -9,8 +9,8 @@ import {
 import styled from 'styled-components/native';
 import CheckBox from '@react-native-community/checkbox';
 import axios from 'axios';
-import {API_URI} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {login} from "@/lib/api/auth";
 
 const Login = ({navigation}: any) => {
   const [id, setId] = useState<string>('');
@@ -27,46 +27,19 @@ const Login = ({navigation}: any) => {
         navigation.navigate('Main');
       }
     });
-  }, []);
+  }, [navigation]);
 
-  const login = async () => {
+  const handleLogin = async () => {
     if (id === '' || password === '') {
       setError('아이디와 비밀번호를 입력해주세요.');
     } else {
-      axios
-        .post(`${API_URI}auth/login`, {
-          user_id: id,
-          user_pw: password,
-        })
-        .then(res => {
-          console.log(res);
-          if (res.status === 200) {
-            setError('');
-            AsyncStorage.setItem('refresh', res.data.refreshToken).then(() => {
-              axios
-                .get(`${API_URI}auth/refresh`, {
-                  headers: {
-                    Cookie: `refreshToken=${res.data.refreshToken};`,
-                  },
-                  withCredentials: true,
-                })
-                .then(res => {
-                  console.log(res);
-                  AsyncStorage.setItem('access', res.data.accessToken).then(
-                    () => {
-                      navigation.navigate('Main');
-                    },
-                  );
-                });
-            });
-          } else {
+      login({id, password})
+          .then(res => {
+            navigation.navigate('Main');
+          })
+          .catch(error => {
             setError('아이디와 비밀번호를 확인해주세요.');
-          }
-        })
-        .catch(error => {
-          console.log(error);
-          setError('아이디와 비밀번호를 확인해주세요.');
-        });
+          });
     }
   };
 
@@ -119,7 +92,7 @@ const Login = ({navigation}: any) => {
           <TextButton>계정을 잃어버렸어요</TextButton>
         </LoginAction>
         <Spacer4 />
-        <LoginButton onPress={login}>
+        <LoginButton onPress={handleLogin}>
           <LoginText>로그인</LoginText>
         </LoginButton>
         <Spacer6 />

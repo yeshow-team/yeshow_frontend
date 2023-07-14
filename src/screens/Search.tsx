@@ -9,13 +9,10 @@ import {
   Pressable,
   View,
   TextInput,
+    TouchableOpacity
 } from 'react-native';
 import styled from 'styled-components/native';
 import dayString from '../constants/dayString';
-import Header from '@/components/header';
-import category from '@/constants/category';
-import {TouchableOpacity} from 'react-native';
-import {API_URI} from '@env';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -36,7 +33,7 @@ const Search = ({navigation}: any) => {
     AsyncStorage.getItem('access').then(value => {
       axios
         .post(
-          `${API_URI}shop/search`,
+          `${process.env.API_URI}shop/search`,
           {search: query},
           {
             headers: {

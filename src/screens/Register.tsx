@@ -9,12 +9,6 @@ import {
 } from 'react-native';
 import Back from '@assets/icons/back_2.svg';
 import {useEffect, useState} from 'react';
-import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import {API_URI} from '@env';
-import Like from '@assets/icons/like.svg';
-import Share from '@assets/icons/share.svg';
-import GradeIcon from '@assets/icons/restaurant.svg';
 
 const Register = ({route, navigation}: any) => {
   const [step, setStep] = useState<number>(1);

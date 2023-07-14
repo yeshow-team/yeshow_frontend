@@ -18,7 +18,6 @@ const Header = () => {
 
   const logout = async () => {
     const refresh = await AsyncStorage.getItem('refresh');
-    console.log(refresh);
     axios
       .get('http://152.70.255.76:3000/auth/refresh', {
         headers: {
@@ -41,7 +40,6 @@ const Header = () => {
   return (
     <Container>
       <AppLogo height={25} />
-
       <Icons>
         <TouchableOpacity onPress={() => navigation.push('Search')}>
           <Search height={22} />
@@ -54,24 +52,6 @@ const Header = () => {
   );
 };
 export default Header;
-
-const BackContainer = styled.View`
-  height: 56px;
-  background-color: ${({theme}) => theme.color.grade1};
-  width: 100%;
-  align-items: center;
-  padding: 0 20px;
-  left: 0;
-  top: 0;
-  margin: 0;
-  flex-direction: row;
-  justify-content: flex-start;
-`;
-
-const HeaderTitle = styled.Text`
-  font-weight: 700;
-  font-size: 22px;
-`;
 
 const Container = styled.View`
   height: 56px;

@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "34434613325",
+    "project_id": "yeshow-9c684",
+    "storage_bucket": "yeshow-9c684.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:34434613325:android:86f9e44b922c30f6811c04",
+        "android_client_info": {
+          "package_name": "com.yeshow.yeshowapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "34434613325-ou3a28m8b1oa2ukm49m1laf666enfpqc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.yeshow.yeshowapp",
+            "certificate_hash": "490ffce2fc5aaaa218e7c75867f57523c29c9bb0"
+          }
+        },
+        {
+          "client_id": "34434613325-p5k149uv44froorb902jqli0ohnfueqi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCe1cO62UJWPL7lKPuSRdFyjONU8aSZLNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "34434613325-p5k149uv44froorb902jqli0ohnfueqi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "34434613325-sjshr67bd0uisbdu2mjd0jlme82kuh8l.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.yeshowteam.app.Yeshow"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

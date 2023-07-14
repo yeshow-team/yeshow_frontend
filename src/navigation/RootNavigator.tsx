@@ -24,6 +24,32 @@ const Auth = () => {
 };
 
 const RootNavigator: React.FC = () => {
+  const [modal,setModal] = useRecoilState(modalState);
+  const foregroundListener = useCallback(() => {
+    messaging().onMessage(async remoteMessage => {
+      setModal(
+          {
+            ...modal,
+            open:true,
+            title:remoteMessage.notification.title,
+            content:remoteMessage.notification.body,
+            buttonText:"확인"
+          }
+      );
+    });
+  }, [])
+
+  useEffect(async () => {
+      foregroundListener();
+      const authStatus = await messaging().requestPermission();
+      const enabled =
+          authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+          authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+      if (enabled) {
+        const token = await messaging().getToken();
+        console.log(token);
+      }
+  },[]);
   return (
     <Stack.Navigator
       initialRouteName="Auth"
@@ -36,6 +62,7 @@ const RootNavigator: React.FC = () => {
       <Stack.Screen name="Shop" component={Shop} />
       <Stack.Screen name="Reservation" component={Reservation} />
       <Stack.Screen name="ReservationResult" component={ReservationResult} />
+
     </Stack.Navigator>
   );
 };

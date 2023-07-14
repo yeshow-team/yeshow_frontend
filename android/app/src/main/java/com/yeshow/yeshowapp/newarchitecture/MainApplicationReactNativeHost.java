@@ -1,4 +1,4 @@
-package com.yeshow.newarchitecture;
+package com.yeshow.yeshowapp.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,9 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.fabric.ReactNativeConfig;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.yeshow.BuildConfig;
-import com.yeshow.newarchitecture.components.MainComponentsRegistry;
-import com.yeshow.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+import com.yeshow.yeshowapp.BuildConfig;
+import com.yeshow.yeshowapp.newarchitecture.components.MainComponentsRegistry;
+import com.yeshow.yeshowapp.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

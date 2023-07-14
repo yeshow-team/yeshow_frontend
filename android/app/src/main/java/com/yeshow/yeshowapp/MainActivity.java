@@ -1,4 +1,4 @@
-package com.yeshow;
+package com.yeshow.yeshowapp;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
