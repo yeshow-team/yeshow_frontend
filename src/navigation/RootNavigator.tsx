@@ -8,6 +8,16 @@ import Register from '@/screens/Register';
 import Shop from '@screens/Shop';
 import Reservation from '@/screens/Reservation';
 import ReservationResult from '@/screens/ReservationResult';
+import {
+  RecoilRoot,
+  atom,
+  selector,
+  useRecoilState,
+  useRecoilValue,
+} from 'recoil';
+import modalState from "@/store/modal";
+import {useCallback, useEffect} from "react";
+import messaging from "@react-native-firebase/messaging";
 
 const Stack = createStackNavigator();
 
@@ -66,5 +76,6 @@ const RootNavigator: React.FC = () => {
     </Stack.Navigator>
   );
 };
+
 
 export default RootNavigator;

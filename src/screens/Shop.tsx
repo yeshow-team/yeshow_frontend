@@ -7,7 +7,7 @@ import {
   View,
 } from 'react-native';
 import Back from '@assets/icons/back.svg';
-import {useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styled from 'styled-components/native';
 import Like from '@assets/icons/like.svg';
 import Share from '@assets/icons/share.svg';
@@ -65,6 +65,9 @@ const Shop = ({route, navigation}: any) => {
       StatusBar.setBarStyle('dark-content');
     }
   }, []);
+
+  const [isCreatingReview, setIsCreatingReview] = useState(false);
+
   return (
       <>
       <SafeAreaView
@@ -134,9 +137,35 @@ const Shop = ({route, navigation}: any) => {
                   <SectionSubtitle>총 {review.length}개의 리뷰</SectionSubtitle>
                 </Row>
                 <Spacer6 />
-                {review.map((item, index) => (
-                  <>
-                    <ReviewComponent
+                {review.filter((item:ReviewDataType) => item.myReview).length === 0 ?
+                    <CreateReview shop_uuid={route.params.id}/> : null}
+                <Spacer6/>
+
+                {review.map((item:ReviewDataType, index:number) => (
+                    item.myReview ?
+                        <>
+                          <Review
+                              user={item.user_name}
+                              key={index}
+                              title={item.shop_review_title}
+                              content={item.shop_review_detail}
+                              rating={item.shop_review_rating}
+                              date={item.shop_review_updated_date}
+                              myReview={item.myReview}
+                              shopUuid={item.shop_uuid}
+                              reviewId={item.review_id}
+                          />
+                          <Spacer7 />
+                        </>
+                        : null
+                ))}
+                <Spacer5 />
+                <ReviewTitle>다른 사용자들의 리뷰</ReviewTitle>
+                <Spacer6 />
+                {review.map((item:ReviewDataType, index:number) => (
+                    !item.myReview ?
+                        <>
+                    <Review
                       key={index}
                       title={item.shop_review_title}
                       content={item.shop_review_detail}
@@ -148,7 +177,8 @@ const Shop = ({route, navigation}: any) => {
                       reviewId={item.review_id}
                     />
                     <Spacer7 />
-                  </>
+                    </>
+                  : null
                 ))}
               </Container>
             </ScrollView>
@@ -185,7 +215,7 @@ export default Shop;
 
 
 
-const timeForToday = value => {
+const timeForToday = (value) => {
   const today = new Date();
   const timeValue = new Date(value);
 
