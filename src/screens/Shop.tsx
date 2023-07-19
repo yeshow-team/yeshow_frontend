@@ -19,6 +19,8 @@ import {useMutation, useQuery, useQueryClient} from "react-query";
 import review from "@components/Review";
 import {postReview} from "@/lib/api/review";
 import CreateReview from "@components/CreateReview";
+import {useSetRecoilState} from "recoil";
+import reserverState from "@/store/reservation";
 
 type ReviewDataType = {
   shop_review_title: string
@@ -44,6 +46,8 @@ interface MenuType {
 }
 
 const Shop = ({route, navigation}: any) => {
+
+  const setReservationData = useSetRecoilState(reserverState);
 
   const {data:shop} = useQuery(['shop'],() => getShop(route.params.id), {
     enabled: !!route.params.id,
@@ -186,6 +190,15 @@ const Shop = ({route, navigation}: any) => {
       <SafeAreaView style={{backgroundColor: '#3dab70'}}>
         <ReservationButton
           onPress={() => {
+            setReservationData(
+                {
+                  reserverDate: "",
+                  reserverPeople: 1,
+                  shopMenus: [],
+                  reserverMenus: [],
+                  reserverPrice: 0,
+                }
+            )
             navigation.navigate('Reservation', {
               id: route.params.id,
             });

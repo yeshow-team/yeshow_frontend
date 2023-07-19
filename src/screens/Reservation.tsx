@@ -7,6 +7,9 @@ import PeopleSelect from "@components/step/PeopleSelect";
 import MenuSelect from "@components/step/MenuSelect";
 import {useRecoilState} from "recoil";
 import reserverState from "@/store/reservation";
+import messaging from "@react-native-firebase/messaging";
+import client from "@/lib/api/client";
+import {reservation} from "@/lib/api/reservation";
 
 const Reservation = ({route, navigation}: any) => {
   // @ts-ignore
@@ -26,24 +29,38 @@ const Reservation = ({route, navigation}: any) => {
           },
         })
         .then(res => {
-          console.log(res.data);
           setData({
             ...data,
             shopMenus: res.data,
           })
+          console.log(res.data.length);
         });
     });
   }, []);
 
 
 
+
   return(
     <>
-      {step === "시간선택" ? <TimeSelect onNext={() => setStep("시간선택")} onBack={() => navigation.goBack()} /> : null}
+      {step === "시간선택" ? <TimeSelect onNext={() => setStep("인원선택")} onBack={() => navigation.goBack()} /> : null}
       {step === "인원선택" ? <PeopleSelect onNext={() => setStep("메뉴선택")} onBack={() => setStep("시간선택")} /> : null}
-      {step === "메뉴선택" ? <MenuSelect onNext={() => {
-        reservation();
-        navigation.navigate('ReservationResult');}} onBack={() => setStep("인원선택")} /> : null}
+      {step === "메뉴선택" ? <MenuSelect onNext={async () => {
+        const menud = data.reserverMenus.map((menu: any) => {
+          return {
+            menu_id: menu.menu_id,
+            book_menu_amount: menu.menu_count,
+          }
+        });
+        await reservation({
+          shopId: route.params.id,
+          people: data.reserverPeople,
+          date: data.reserverDate,
+          price: data.reserverPrice,
+          menus: menud,
+        });
+        navigation.navigate('ReservationResult');}} onBack={() => setStep("인원선택")} /> : null
+      }
     </>
   )
 };

@@ -7,12 +7,15 @@ export const NextText = styled.Text`
   color: white;
 `;
 
-export const NextButton = styled.TouchableOpacity`
-  background-color: #3dab70;
+export const NextButton = styled.TouchableOpacity<{disabled?:boolean}>`
+  ${props => props.disabled ?
+  "background-color: #c4c4c4" :"background-color: #3dab70"};
   width: 100%;
   height: 60px;
   justify-content: center;
   align-items: center;
+
+}
 `;
 
 export const NumberInput = styled.TextInput`

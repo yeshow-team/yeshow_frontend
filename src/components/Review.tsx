@@ -17,6 +17,7 @@ interface ReviewPropType {
   date: string;
   myReview: boolean;
   shopUuid: string;
+  reviewId: string;
 }
 const Review = ({title, content, user, rating, date,myReview, shopUuid,reviewId} : ReviewPropType) => {
   const [myReviewState, setMyReviewState] = useState(
@@ -49,7 +50,7 @@ const Review = ({title, content, user, rating, date,myReview, shopUuid,reviewId}
 
   const editReviewMutation = useMutation({
     mutationFn: editReview,
-    onMutate: async (newReview) => {
+    onMutate: async (newReview:any) => {
       await queryClient.cancelQueries({ queryKey: ['shopReview', newReview.review_id] })
       const previousReview = queryClient.getQueryData(['shopReview', newReview.review_id])
       queryClient.setQueryData(['shopReview', newReview.review_id], {

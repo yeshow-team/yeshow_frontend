@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {SafeAreaView, Text, TouchableOpacity} from "react-native";
 import Back from "@assets/icons/back_2.svg";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -11,6 +11,8 @@ import {
   Spacer,
   Spacer2
 } from "@components/step/DesignComponents";
+import {useRecoilState} from "recoil";
+import reserverState from "@/store/reservation";
 
 interface SelectProps {
   onNext?:() => void | any;
@@ -19,9 +21,19 @@ interface SelectProps {
 
 const TimeSelect = ({onNext,onBack}:SelectProps) => {
   const [complete, setComplete] = useState<boolean>(false);
-  const [reservationDate, setReservationDate] = useState('');
+  const [data, setData] = useRecoilState(reserverState);
   const [timeVisible, setTimeVisible] = useState<boolean>(false);
-  const [date, setDate] = useState<string>('');
+  const [dateString, setDateString] = useState<string>('');
+  useEffect(
+      () => {
+        if(data.reserverDate) {
+          setComplete(true);
+          setDateString(
+              `${data.reserverDate.getHours() > 12 ? "오후 "+String(Number(data.reserverDate.getHours()) - 12) : date.getHours()}시 ${data.reserverDate.getMinutes()}분`
+          );
+        }
+      }
+  )
   return (
       <>
         <AppContainer>
@@ -44,19 +56,33 @@ const TimeSelect = ({onNext,onBack}:SelectProps) => {
                   isVisible={timeVisible}
                   mode="time"
                   onConfirm={date => {
-                    setDate(date.toString());
                     console.log(date);
-                    setTimeVisible(false);
-                  }}
-                  onCancel={() => {
-                    setTimeVisible(false);
+                    if(date < new Date() || date > new Date(new Date().getTime() + 3 * 60 * 60 * 1000)) {
+                      alert('현재 시간으로부터 3시간 이내로 선택해주세요');
+                      setTimeVisible(false);
+                    } else {
+                      setComplete(true);
+                      setData({...data, reserverDate: date});
+                      setTimeVisible(false);
+                      setDateString(
+                          `${date.getHours() > 12 ? "오후 "+date.getHours()-12 : date.getHours()}시 ${date.getMinutes()}분`
+                      );
+                    }
                   }}
               />
-              <Text>{date}</Text>
+              <Text style={
+                {
+                  fontSize: 40,
+                  fontWeight: "bold",
+                  marginTop: 20
+                }
+              }>
+                {dateString ? dateString : '시간을 선택해주세요'}
+              </Text>
             </>
           </QuestionContainer>
         </AppContainer>
-        <SafeAreaView style={{backgroundColor: complete ? '#3dab70' : '#d9d9d9'}}>
+        <SafeAreaView style={{backgroundColor: complete ? '#3dab70' : '#c4c4c4'}}>
           <NextButton
               onPress={onNext}
               disabled={!complete}>

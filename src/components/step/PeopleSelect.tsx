@@ -9,7 +9,7 @@ import {
   Spacer,
   Spacer2
 } from "@components/step/DesignComponents";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 
 interface SelectProps {
   onNext?:() => void | any;
@@ -19,6 +19,11 @@ interface SelectProps {
 const PeopleSelect = ({onNext,onBack}:SelectProps) => {
   const [complete, setComplete] = useState<boolean>(false);
   const [people, setPeople] = useState<number>(1);
+  useEffect(
+      () => {
+        people > 0 ? setComplete(true) : setComplete(false);
+      }
+  )
   return (
       <>
         <AppContainer>
@@ -27,20 +32,22 @@ const PeopleSelect = ({onNext,onBack}:SelectProps) => {
                 onPress={onBack}>
               <Back />
             </TouchableOpacity>
-
             <Spacer />
             <Question>
-
+              몇 명이{'\n'}
+              오시나요?
             </Question>
             <Spacer2 />
             <NumberInput
                 value={people.toString()}
-                onChangeText={text => setPeople(parseInt(text))}
-                keyboardType="numeric"
+                onChangeText={text => setPeople(text)}
+                returnKeyType="done"
+                keyboardType="number-pad"
+                maxLength={2}
             />
           </QuestionContainer>
         </AppContainer>
-        <SafeAreaView style={{backgroundColor: complete ? '#3dab70' : '#d9d9d9'}}>
+        <SafeAreaView style={{backgroundColor: complete ? '#3dab70' : '#c4c4c4'}}>
           <NextButton
               onPress={onNext}
               disabled={!complete}>
